@@ -1,0 +1,22 @@
+{
+    "name": "alessandrob88/jadic",
+    "description": "Just another dependency injection container",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alessandro Bocci",
+            "email": "alessandro.bocci88@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "psr/container": "^1.0",
+        "phpunit/phpunit": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {"Jadic\\": "src/"}
+    },
+    "autoload-dev": {
+        "psr-4": {"Jadic\\Test\\": "test/"}
+    }
+}
