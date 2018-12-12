@@ -93,6 +93,7 @@ class Container implements ContainerInterface
         }
 
         $reflectionObj = new ReflectionClass($className);
+        $classConstructor = $reflectionObj->getConstructor();
 
         if (!$reflectionObj->isInstantiable()) {
             throw new ContainerException("Class {$className} is not instantiable");
@@ -109,7 +110,44 @@ class Container implements ContainerInterface
         }
         else
         {
-            $obj = new $className;
+            $classDependencies   = $classConstructor->getParameters();
+            $obj = $this->getAutoWiringObjects($reflectionObj, $classDependencies);
+        }
+
+        return $obj;
+    }
+
+    private function getAutoWiringObjects($reflectionObj, $classDependencies)
+    {
+        $autoWiringArguments = array();
+
+        if(!empty($classDependencies))
+        {
+            foreach($classDependencies as $dependency)
+            {
+                /* @var $dependencyClass \ReflectionClass */
+                $dependencyClass = $dependency->getClass();
+
+                if($dependencyClass === null)
+                {
+                    if($dependency->isDefaultValueAvailable()){
+                        $autoWiringArguments[] = $dependency->getDefaultValue();
+                    }
+                    else {
+                        throw new ContainerException("Cannot resolve dependency {$dependency->getName()}");
+                    }
+                }
+                else
+                {
+                    $autoWiringArguments[] = $this->get($dependencyClass->getName());
+                }
+
+            }
+            $obj = $reflectionObj->newInstanceArgs($autoWiringArguments);
+        }
+        else
+        {
+            $obj = $reflectionObj->newInstance();
         }
 
         return $obj;
