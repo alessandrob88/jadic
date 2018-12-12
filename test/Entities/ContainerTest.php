@@ -9,6 +9,15 @@ use Jadic\Test\Assets\Foo;
 
 final class ContainerTest extends TestCase
 {
+
+    public function testDependencyWithAutoWiring()
+    {
+        $container = new Container();
+        $container->get(Foo::class);
+        $this->assertTrue($container->has(Foo::class));
+        $this->assertTrue($container->has(Bar::class));
+    }
+
     public function testHasFunctionWithUnexistingClass()
     {
         $container = new Container;
